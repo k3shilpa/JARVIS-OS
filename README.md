@@ -1,155 +1,48 @@
-# JARVIS — Personal AI Operating System for Developers
-### 100% Free Stack — Built for Students
+# 🤖 JARVIS — Personal AI Operating System for Developers
 
-## What is JARVIS?
+> A full-stack AI-powered developer assistant. Ask questions, debug code, get architecture advice — all in one place. 100% free to build and run.
 
-JARVIS is a full-stack web application that acts as your personal AI-powered developer assistant — like having a senior engineer available 24/7 inside your browser. You type a question, paste code, describe a bug, or ask for architecture advice, and JARVIS streams back intelligent, developer-focused answers in real time. It remembers your past conversations, keeps a searchable history, and is protected by your own login so only you can access it.
-
-Think of it as a private, self-hosted version of ChatGPT — built specifically for developers, with code highlighting, quick command shortcuts, and a slick dark UI that feels like a real operating system. And it costs you absolutely nothing to build or run.
-
----
-
-## The Problem It Solves
-
-Developers constantly context-switch between their editor, browser, Stack Overflow, and AI tools. JARVIS brings everything into one place:
-
-- Ask coding questions and get precise, runnable answers
-- Debug errors by pasting stack traces
-- Get code reviewed, refactored, or explained
-- Design APIs, databases, and system architecture
-- Never lose a useful AI conversation again — everything is saved
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
 
 ---
 
-## Complete Free Tech Stack
+## 📌 What is JARVIS?
+
+JARVIS is a full-stack web application that acts as your personal AI-powered developer assistant — like having a senior engineer available 24/7 in your browser. Powered by **Groq's free API** (Llama 3.3 70B), it gives you:
+
+- 💬 Real-time streaming AI responses
+- 🧠 Full conversation memory and history
+- 🔐 Personal login so only you can access it
+- ⚡ Quick command shortcuts (Debug, Refactor, Write Tests, Explain)
+- 🎨 Syntax-highlighted code blocks with one-click copy
+
+> Built as a learning project — every phase teaches real full-stack skills.
+
+---
+
+## 💸 Total Cost: ₹0
 
 | Layer | Technology | Cost |
-|-------|------------|------|
+|---|---|---|
 | AI Brain | Groq API (Llama 3.3 70B) | Free forever |
 | Frontend | React + Vite | Free (open source) |
 | Backend | Node.js + Express | Free (open source) |
-| Database | SQLite (dev) → Supabase (prod) | Free |
+| Database (dev) | SQLite | Free |
+| Database (prod) | Supabase (PostgreSQL) | Free tier |
 | ORM | Prisma | Free (open source) |
 | Auth | JWT + bcrypt | Free (open source) |
 | Frontend hosting | Vercel | Free forever |
 | Backend hosting | Render.com | Free tier |
 | Version control | GitHub | Free |
 
-Total monthly cost: ₹0
-
 ---
 
-## Why Groq Instead of Paid APIs?
-
-Groq is a free AI API that runs open-source models like Meta's Llama 3.3 70B — one of the most powerful AI models in the world. It is:
-
-- Completely free with no credit card required
-- Extremely fast (often faster than paid APIs)
-- Compatible with the same API patterns as OpenAI and Anthropic
-- Generous enough rate limits for any personal project
-
-When you get a job or have money later, switching to Claude or GPT-4 takes literally changing 2 lines of code. You lose nothing by starting with Groq.
-
-How to get your free Groq API key:
-1. Go to console.groq.com
-2. Sign up with Google or GitHub (free, no card)
-3. Click "API Keys" then "Create API Key"
-4. Copy the key — you are done
-
----
-
-## Tech Stack — Full Explanation
-
-### Frontend (What the user sees)
-
-React with Vite is the UI framework. Instead of writing plain HTML and manually updating the DOM, React lets you build the interface as reusable components — a ChatBubble component, a Sidebar component, an InputBar component. When data changes (like a new message arrives), React automatically updates only the parts of the UI that need to change. Vite is the build tool that gives you instant hot-reload during development.
-
-Tailwind CSS handles all the styling. The JARVIS interface will have a dark theme with cyan and blue accents, monospace fonts for code blocks, and smooth transitions.
-
-React Router handles navigation between pages — login page, main chat page, history page — without ever reloading the browser.
-
-The Fetch API and EventSource are browser-native tools for making HTTP requests to the backend and receiving streaming responses (where JARVIS types words one by one instead of waiting for the full answer).
-
----
-
-### Backend (The server that powers everything)
-
-Node.js is the JavaScript runtime that lets you run JS on a server, not just in the browser. Your backend is a Node.js application that listens for requests from the frontend and responds.
-
-Express.js is a minimal framework on top of Node.js. It makes it simple to define routes (what happens when the frontend calls /api/chat or /api/login), add middleware (like authentication checks), and send back responses.
-
-The Groq SDK is the official Node.js library for calling Groq's AI API. Your backend uses this to forward the user's message to Llama 3.3 and stream the response back. You install it with: npm install groq-sdk
-
-JWT (JSON Web Tokens) is the authentication system. When a user logs in, the server creates a signed token and sends it to the browser. Every future request includes this token so the server knows who is asking — without checking the database every single time.
-
-bcrypt handles password hashing. Passwords are never stored in plain text. bcrypt converts "mypassword123" into a scrambled, irreversible string that cannot be decoded.
-
----
-
-### Database (Where data lives permanently)
-
-SQLite is used during development. It is a simple file-based database that requires zero setup and zero cost. The entire database is a single .db file sitting in your project folder.
-
-Supabase is used when you deploy. It is a free hosted PostgreSQL database. When you push your project live, you point the backend at Supabase instead of the local SQLite file. The free tier gives you 500MB — more than enough for a personal project and no card required.
-
-Prisma ORM sits on top of the database. Instead of writing raw SQL like SELECT * FROM messages WHERE user_id = 1, Prisma lets you write JavaScript like db.message.findMany({ where: { userId: 1 } }). It also manages your schema through migration files, so changes to the database structure are controlled and reversible.
-
-What gets stored:
-- Users — id, email, hashed password, created date
-- Conversations — id, user_id, title, created date
-- Messages — id, conversation_id, role (user or assistant), content, timestamp
-
----
-
-### Deployment (Making it live — all free)
-
-Vercel hosts the React frontend. Connect your GitHub repo and every time you push code, it auto-deploys in seconds. Free forever for personal projects and no credit card ever needed.
-
-Render.com hosts the Node.js backend on a free tier. No card required to sign up.
-
-Supabase hosts the production PostgreSQL database for free.
-
-Environment variables store your Groq API key and JWT secret on these platforms — never written in your code, never pushed to GitHub.
-
----
-
-## How the Full System Works — Step by Step
-
-### Step 1: User opens the browser
-
-The user visits the deployed URL. Vercel serves the React app as HTML, CSS, and JavaScript files. The browser downloads and runs them, rendering the JARVIS login screen.
-
-### Step 2: Login
-
-The user enters their email and password. React sends a POST /api/auth/login request to Express. Express looks up the user in the database, uses bcrypt to compare the password with the stored hash. If they match, it creates a JWT token and sends it back. React stores this token in localStorage. Every future API call will include it in the Authorization header.
-
-### Step 3: Loading the chat interface
-
-Once logged in, React calls GET /api/conversations to load the user's past conversations. Express validates the JWT, extracts the user ID, queries the database, and returns the list as JSON. React renders them in the sidebar.
-
-### Step 4: Sending a message
-
-The user types "How do I reverse a linked list in Python?" and hits Enter. React appends the message to the UI immediately so it feels instant. It then sends a POST /api/chat request to Express with the message content and conversation ID.
-
-### Step 5: The backend calls Groq
-
-Express receives the request and validates the JWT. It loads the full conversation history from the database so the AI has context. It calls the Groq SDK with the conversation history and a system prompt that defines JARVIS's personality. It requests a streaming response so words come back as they are generated.
-
-### Step 6: Streaming back to the browser
-
-Express uses Server-Sent Events (SSE) — a technique where the HTTP connection stays open and the server keeps pushing data chunks. Each word from Groq is immediately forwarded to the browser. React receives these chunks via EventSource and appends each one to the message bubble in real time, creating the live typing effect.
-
-### Step 7: Saving to the database
-
-Once the stream ends, the backend saves both the user message and the full assistant response to the database. If it is a new conversation, the title is auto-generated from the first message.
-
-### Step 8: The user sees the answer
-
-The full response renders with syntax-highlighted code blocks, bold text, and bullet points parsed from markdown. The conversation is saved and will appear in the sidebar next time.
-
----
-
-## Project Folder Structure
+## 🗂️ Project Structure
 
 ```
 jarvis-os/
@@ -157,37 +50,35 @@ jarvis-os/
 │   ├── src/
 │   │   ├── components/
 │   │   │   ├── ChatWindow.jsx     ← Main chat area
-│   │   │   ├── MessageBubble.jsx  ← Individual message with markdown rendering
-│   │   │   ├── InputBar.jsx       ← Text input and send button
+│   │   │   ├── MessageBubble.jsx  ← Message with markdown rendering
+│   │   │   ├── InputBar.jsx       ← Text input + send button
 │   │   │   ├── Sidebar.jsx        ← Conversation history list
-│   │   │   └── QuickCommands.jsx  ← Shortcut buttons (Debug, Refactor, etc.)
+│   │   │   └── QuickCommands.jsx  ← Shortcut command buttons
 │   │   ├── pages/
-│   │   │   ├── LoginPage.jsx      ← Login and signup form
+│   │   │   ├── LoginPage.jsx      ← Login / signup
 │   │   │   └── ChatPage.jsx       ← Main app page
 │   │   ├── hooks/
-│   │   │   └── useChat.js         ← Custom hook managing chat state and logic
+│   │   │   └── useChat.js         ← Custom hook for chat logic
 │   │   ├── api/
-│   │   │   └── client.js          ← All fetch calls to the backend
-│   │   ├── App.jsx                ← Root component and routing
-│   │   └── main.jsx               ← Entry point
-│   ├── index.html
+│   │   │   └── client.js          ← All API calls to backend
+│   │   ├── App.jsx
+│   │   └── main.jsx
 │   └── package.json
 │
 ├── backend/                       ← Node.js + Express server
 │   ├── src/
 │   │   ├── routes/
-│   │   │   ├── auth.js            ← POST /api/auth/login and /register
-│   │   │   ├── chat.js            ← POST /api/chat (streaming via Groq)
-│   │   │   └── conversations.js   ← GET and DELETE /api/conversations
+│   │   │   ├── auth.js            ← POST /api/auth/login, /register
+│   │   │   ├── chat.js            ← POST /api/chat (Groq streaming)
+│   │   │   └── conversations.js   ← GET, DELETE /api/conversations
 │   │   ├── middleware/
-│   │   │   └── auth.js            ← JWT validation middleware
+│   │   │   └── auth.js            ← JWT validation
 │   │   ├── db/
-│   │   │   └── prisma.js          ← Prisma client instance
-│   │   └── index.js               ← Express app entry point
+│   │   │   └── prisma.js          ← Prisma client
+│   │   └── index.js               ← Server entry point
 │   ├── prisma/
-│   │   └── schema.prisma          ← Database schema (User, Conversation, Message)
-│   ├── .env                       ← Your secrets — never commit this file
-│   ├── .env.example               ← Template showing what variables are needed
+│   │   └── schema.prisma          ← DB schema
+│   ├── .env.example               ← Environment variable template
 │   └── package.json
 │
 └── README.md
@@ -195,67 +86,230 @@ jarvis-os/
 
 ---
 
-## The .env File (Backend Secrets)
+## ⚙️ Tech Stack
 
+### Frontend
+- **React 18** — Component-based UI framework
+- **Vite** — Fast dev server with hot reload
+- **React Router** — Client-side page navigation
+- **Tailwind CSS** — Utility-first styling
+- **EventSource API** — Receive streaming responses from backend
+
+### Backend
+- **Node.js** — JavaScript runtime for the server
+- **Express.js** — Minimal HTTP server and routing
+- **Groq SDK** — Official client for Groq's free AI API
+- **Prisma** — Type-safe ORM for database access
+- **JWT** — Stateless authentication tokens
+- **bcrypt** — Secure password hashing
+
+### Database
+- **SQLite** — Zero-config file database for local development
+- **PostgreSQL via Supabase** — Free hosted database for production
+
+### Deployment
+- **Vercel** — Frontend hosting (free, auto-deploys from GitHub)
+- **Render.com** — Backend hosting (free tier)
+- **Supabase** — Managed PostgreSQL (free tier)
+
+---
+
+## 🚀 Getting Started (Local Development)
+
+### Prerequisites
+
+Make sure you have these installed:
+
+```bash
+node --version   # v18 or higher
+npm --version    # v9 or higher
+git --version
 ```
-# backend/.env
-# Never push this file to GitHub
 
+Don't have Node.js? Download it free from [nodejs.org](https://nodejs.org)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/jarvis-os.git
+cd jarvis-os
+```
+
+### 2. Get your free Groq API key
+
+1. Go to [console.groq.com](https://console.groq.com)
+2. Sign up with Google or GitHub — no card needed
+3. Click **API Keys** → **Create API Key**
+4. Copy the key
+
+### 3. Set up the backend
+
+```bash
+cd backend
+npm install
+```
+
+Create a `.env` file:
+
+```bash
+cp .env.example .env
+```
+
+Fill in your `.env`:
+
+```env
 GROQ_API_KEY=gsk_your_key_here
-JWT_SECRET=any_long_random_string_you_make_up_yourself
+JWT_SECRET=make_up_any_long_random_string
 DATABASE_URL=file:./dev.db
 PORT=5000
 ```
 
-These values are never written in code. They are loaded at runtime using the dotenv package.
+Set up the database:
+
+```bash
+npx prisma migrate dev --name init
+```
+
+Start the backend server:
+
+```bash
+npm run dev
+```
+
+Backend runs at `http://localhost:5000`
+
+### 4. Set up the frontend
+
+Open a new terminal:
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs at `http://localhost:5173`
+
+Open your browser and go to `http://localhost:5173` — JARVIS is running! 🎉
 
 ---
 
-## Key Concepts You Will Learn
+## 🔐 Environment Variables
 
-React fundamentals — components, JSX, props, state with useState, side effects with useEffect, custom hooks, and how React's rendering model works.
+### Backend — `backend/.env`
 
-REST API design — clean URL routes, HTTP verbs (GET, POST, DELETE), status codes, JSON structure, and error handling.
+| Variable | Description | Example |
+|---|---|---|
+| `GROQ_API_KEY` | Your free Groq API key | `gsk_abc123...` |
+| `JWT_SECRET` | Any long random string for signing tokens | `my_super_secret_key_123` |
+| `DATABASE_URL` | Path to SQLite file (dev) or Supabase URL (prod) | `file:./dev.db` |
+| `PORT` | Port the backend server runs on | `5000` |
 
-Authentication and security — how password hashing works, what JWT tokens are and why they are used, how middleware intercepts requests to check permissions, and why secrets never go in code.
-
-Databases and SQL — what relational databases are, how tables and foreign keys work, basic SQL queries, and how Prisma ORM abstracts this into clean JavaScript.
-
-Streaming and real-time data — how Server-Sent Events work, why streaming feels better than waiting, and how to handle chunked data on both server and browser.
-
-Deployment and DevOps basics — environment variables, the difference between development and production, deploying to Vercel and Render, and connecting a hosted database.
-
----
-
-## Development Phases
-
-| Phase | What you build | Key concepts |
-|-------|----------------|--------------|
-| 1 | React scaffold + dark JARVIS layout | Components, JSX, Vite |
-| 2 | Chat UI with fake responses | useState, useEffect, props |
-| 3 | Node.js + Express backend | Routing, middleware, REST API |
-| 4 | Real AI via Groq with streaming | Groq SDK, SSE, async/await |
-| 5 | SQLite database for chat history | Prisma, SQL, migrations |
-| 6 | Login and auth with JWT | bcrypt, JWT, protected routes |
-| 7 | Deploy everything live for free | Vercel, Render, Supabase |
+> ⚠️ Never commit your `.env` file. It is already in `.gitignore`.
 
 ---
 
-## What the Finished Product Looks Like
+## 🗃️ Database Schema
 
-- A dark, terminal-inspired UI with a sidebar listing all past conversations
-- Messages stream in word-by-word, just like ChatGPT
-- Code blocks with syntax highlighting and a one-click copy button
-- Quick command buttons (Debug, Refactor, Write Tests, Explain) that pre-fill the input
-- A login screen protecting your personal JARVIS
-- Full conversation history saved to a database and loaded on every visit
-- Deployed on a real public URL accessible from any device, anywhere in the world
+```prisma
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  password      String
+  createdAt     DateTime       @default(now())
+  conversations Conversation[]
+}
+
+model Conversation {
+  id        String    @id @default(uuid())
+  title     String
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  messages  Message[]
+  createdAt DateTime  @default(now())
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  role           String       // "user" or "assistant"
+  content        String
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  createdAt      DateTime     @default(now())
+}
+```
 
 ---
 
-## Switching to a Paid API Later (Optional)
+## 🌊 How Streaming Works
 
-When you are ready to upgrade someday, this is all that changes in your backend:
+```
+User types message
+       ↓
+React sends POST /api/chat
+       ↓
+Express loads conversation history from DB
+       ↓
+Groq SDK streams tokens from Llama 3.3
+       ↓
+Express forwards each chunk via SSE
+       ↓
+React appends each chunk to the UI in real time
+       ↓
+Stream ends → backend saves full message to DB
+```
+
+---
+
+## 🛠️ API Endpoints
+
+| Method | Route | Description | Auth required |
+|---|---|---|---|
+| POST | `/api/auth/register` | Create new account | No |
+| POST | `/api/auth/login` | Login, returns JWT | No |
+| GET | `/api/conversations` | Get all conversations | Yes |
+| DELETE | `/api/conversations/:id` | Delete a conversation | Yes |
+| POST | `/api/chat` | Send message, stream AI response | Yes |
+
+---
+
+## 📦 Build for Production
+
+### Frontend
+
+```bash
+cd frontend
+npm run build
+```
+
+Deploy the `dist/` folder to Vercel.
+
+### Backend
+
+Push to GitHub and connect to Render.com. Add your environment variables in the Render dashboard.
+
+### Database
+
+Create a free project at [supabase.com](https://supabase.com), copy the connection string, and set it as `DATABASE_URL` in your production environment variables.
+
+---
+
+## 🔭 Roadmap
+
+- [x] Project setup and architecture
+- [ ] Phase 1 — React UI scaffold + dark layout
+- [ ] Phase 2 — Chat interface with state management
+- [ ] Phase 3 — Express backend with REST API
+- [ ] Phase 4 — Groq AI integration with streaming
+- [ ] Phase 5 — SQLite database and conversation history
+- [ ] Phase 6 — JWT authentication and login
+- [ ] Phase 7 — Deploy frontend + backend + database
+
+---
+
+## 🔄 Switching to a Paid AI Provider (Optional)
+
+When you want to upgrade, only 2 lines change in your backend:
 
 ```js
 // Current — Groq (free)
@@ -263,14 +317,36 @@ import Groq from "groq-sdk";
 const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 const model = "llama-3.3-70b-versatile";
 
-// Future — Anthropic Claude (paid, more powerful)
+// Upgrade — Anthropic Claude (when ready)
 import Anthropic from "@anthropic-ai/sdk";
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const model = "claude-sonnet-4-5";
 ```
 
-Two lines change. Everything else — all your routes, database, auth, and frontend — stays exactly the same. The skills you build are fully transferable.
+All routes, database logic, auth, and frontend stay exactly the same.
 
 ---
 
-*This is your complete project reference. Every phase is built step by step — you write the code, ask questions freely, and by the end you will have a production-grade full-stack AI application built entirely from scratch, deployed live on the internet, for zero rupees.*
+## 🤝 Contributing
+
+This is a personal learning project. Feel free to fork it and build your own version!
+
+1. Fork the repo
+2. Create a feature branch — `git checkout -b feature/my-feature`
+3. Commit your changes — `git commit -m "Add my feature"`
+4. Push to the branch — `git push origin feature/my-feature`
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+MIT License — free to use, modify, and distribute.
+
+---
+
+## 👨‍💻 Author
+
+Built from scratch as a full-stack learning project.
+
+> *"The best way to learn is to build something real."*
