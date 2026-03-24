@@ -25,20 +25,20 @@ JARVIS is a full-stack web application that acts as your personal AI-powered dev
 
 ---
 
-## 💸 Total Cost: ₹0
+## Technologies
 
-| Layer | Technology | Cost |
+| Layer | Technology |
 |---|---|---|
-| AI Brain | Groq API (Llama 3.3 70B) | Free forever |
-| Frontend | React + Vite | Free (open source) |
-| Backend | Node.js + Express | Free (open source) |
-| Database (dev) | SQLite | Free |
-| Database (prod) | Supabase (PostgreSQL) | Free tier |
-| ORM | Prisma | Free (open source) |
-| Auth | JWT + bcrypt | Free (open source) |
-| Frontend hosting | Vercel | Free forever |
-| Backend hosting | Render.com | Free tier |
-| Version control | GitHub | Free |
+| AI Brain | Groq API (Llama 3.3 70B) |
+| Frontend | React + Vite |
+| Backend | Node.js + Express |
+| Database (dev) | SQLite |
+| Database (prod) | Supabase (PostgreSQL) |
+| ORM | Prisma |
+| Auth | JWT + bcrypt |
+| Frontend hosting | Vercel |
+| Backend hosting | Render.com |
+| Version control | GitHub |
 
 ---
 

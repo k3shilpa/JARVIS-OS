@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700&display=swap');
+
+:root {
+  --bg-void:     #030810;
+  --bg-panel:    #060f1a;
+  --bg-card:     #0a1628;
+  --bg-input:    #0d1f35;
+  --border:      #0e2a45;
+  --border-glow: #0d4a7a;
+  --cyan:        #00d4ff;
+  --cyan-dim:    #0099bb;
+  --cyan-faint:  #00d4ff18;
+  --blue:        #1a6fff;
+  --blue-dim:    #0a3fa0;
+  --text-1:      #e0f4ff;
+  --text-2:      #6a9bbf;
+  --text-muted:  #3a6080;
+  --green:       #00ff9d;
+  --orange:      #ff8c42;
+  --red:         #ff3e6c;
+  --mono:        'Share Tech Mono', monospace;
+  --ui:          'Exo 2', sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-void);
+  color: var(--text-1);
+  font-family: var(--ui);
+}
+
+/* Scanline overlay — the subtle CRT effect across the whole screen */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 212, 255, 0.012) 2px,
+    rgba(0, 212, 255, 0.012) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Thin scrollbars everywhere */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-glow); border-radius: 2px; }
+
+/* Pulsing animation for the status dot */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* Spinning animation for the welcome logo */
+@keyframes spin  { from { transform: rotate(0deg); }  to { transform: rotate(360deg); } }
+@keyframes spinR { from { transform: rotate(0deg); }  to { transform: rotate(-360deg); } }
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
