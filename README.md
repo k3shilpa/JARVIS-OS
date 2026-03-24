@@ -28,7 +28,7 @@ JARVIS is a full-stack web application that acts as your personal AI-powered dev
 ## Technologies
 
 | Layer | Technology |
-|---|---|---|
+|---|---|
 | AI Brain | Groq API (Llama 3.3 70B) |
 | Frontend | React + Vite |
 | Backend | Node.js + Express |
