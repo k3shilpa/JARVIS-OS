@@ -1,26 +1,58 @@
 import { useState } from 'react'
+import { useChat } from '../hooks/useChat'
 
-// ─── Mock data — replaced by real DB data in Phase 5 ───────────────────────────
-const CONVOS = [
-  { id: 1, title: 'Debug Express middleware',   time: '14:32', group: 'today' },
-  { id: 2, title: 'Prisma schema design',       time: '11:20', group: 'today' },
-  { id: 3, title: 'React useEffect cleanup',    time: '09:05', group: 'today' },
-  { id: 4, title: 'JWT auth flow explained',    time: 'Mon',   group: 'yesterday' },
-  { id: 5, title: 'SSE streaming setup',        time: 'Mon',   group: 'yesterday' },
-  { id: 6, title: 'Tailwind dark theme setup',  time: 'Sun',   group: 'earlier' },
-  { id: 7, title: 'Deploy to Vercel walkthrough', time: 'Sat', group: 'earlier' },
-]
-
-const GROUPS = ['today', 'yesterday', 'earlier']
+// ─── Sidebar ──────────────────────────────────────────────────────────────────
+// Your Phase 1 design is fully preserved:
+//   ✓ Right-edge glow line
+//   ✓ NEW SESSION button (same styles)
+//   ✓ Search box
+//   ✓ Grouped list with TODAY / YESTERDAY / EARLIER labels
+//   ✓ ▶ / ◈ icons, hover states, delete ✕ button
+//   ✓ Context window meter at the bottom
+//
+// Phase 2 changes (minimal):
+//   - useChat() replaces the hardcoded CONVOS array
+//   - NEW SESSION calls newConversation()
+//   - Clicking a row calls selectConversation()
+//   - ✕ calls deleteConversation() instead of alert()
 
 export default function Sidebar() {
-  const [activeId, setActiveId] = useState(1)  // which convo is selected
-  const [search, setSearch]     = useState('')  // search box value
+  const {
+    conversations,
+    activeConversationId,
+    selectConversation,
+    newConversation,
+    deleteConversation,
+  } = useChat()
 
-  // Filter conversations by the search term
-  const filtered = CONVOS.filter(c =>
+  const [search, setSearch] = useState('')
+
+  // Filter by search term
+  const filtered = conversations.filter(c =>
     c.title.toLowerCase().includes(search.toLowerCase())
   )
+
+  // Assign each conversation to a group based on its createdAt timestamp
+  const todayStr = new Date().toDateString()
+  const yestStr  = new Date(Date.now() - 86400000).toDateString()
+
+  function getGroup(convo) {
+    const d = new Date(convo.createdAt).toDateString()
+    if (d === todayStr) return 'today'
+    if (d === yestStr)  return 'yesterday'
+    return 'earlier'
+  }
+
+  function getTimeLabel(convo) {
+    const d     = new Date(convo.createdAt)
+    const group = getGroup(convo)
+    if (group === 'today') {
+      return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    }
+    return d.toLocaleDateString([], { weekday: 'short' })
+  }
+
+  const GROUPS = ['today', 'yesterday', 'earlier']
 
   return (
     <aside style={{
@@ -43,7 +75,7 @@ export default function Sidebar() {
 
       {/* New session button */}
       <div style={{ padding: '16px 14px 12px', borderBottom: '1px solid var(--border)' }}>
-        <NewSessionBtn />
+        <NewSessionBtn onClick={newConversation} />
       </div>
 
       {/* Search box */}
@@ -59,15 +91,16 @@ export default function Sidebar() {
             fontFamily: 'var(--mono)', fontSize: '11px', outline: 'none',
             transition: 'border-color 0.2s',
           }}
-          onFocus={e  => (e.target.style.borderColor = 'var(--cyan-dim)')}
-          onBlur={e   => (e.target.style.borderColor = 'var(--border)')}
+          onFocus={e => (e.target.style.borderColor = 'var(--cyan-dim)')}
+          onBlur={e  => (e.target.style.borderColor = 'var(--border)')}
         />
       </div>
 
       {/* Conversation list — scrollable */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '8px' }}>
+
         {GROUPS.map(group => {
-          const items = filtered.filter(c => c.group === group)
+          const items = filtered.filter(c => getGroup(c) === group)
           if (!items.length) return null
           return (
             <div key={group}>
@@ -83,19 +116,34 @@ export default function Sidebar() {
               {items.map(c => (
                 <ConvoItem
                   key={c.id}
-                  convo={c}
-                  active={activeId === c.id}
-                  onClick={() => setActiveId(c.id)}
+                  convo={{ ...c, time: getTimeLabel(c) }}
+                  active={activeConversationId === c.id}
+                  onClick={() => selectConversation(c.id)}
+                  onDelete={() => deleteConversation(c.id)}
                 />
               ))}
             </div>
           )
         })}
+
+        {/* Empty search result */}
+        {filtered.length === 0 && (
+          <div style={{
+            textAlign: 'center', padding: '32px 16px',
+            fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--text-muted)',
+          }}>
+            no sessions found
+          </div>
+        )}
+
       </div>
 
       {/* Footer: context window meter */}
       <div style={{ padding: '12px 14px', borderTop: '1px solid var(--border)' }}>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '4px' }}>
+        <div style={{
+          fontFamily: 'var(--mono)', fontSize: '9px',
+          color: 'var(--text-muted)', letterSpacing: '0.1em', marginBottom: '4px',
+        }}>
           context used — 34%
         </div>
         <div style={{ height: '2px', background: 'var(--border)', borderRadius: '1px', overflow: 'hidden' }}>
@@ -112,11 +160,13 @@ export default function Sidebar() {
 }
 
 // ─── New Session Button ────────────────────────────────────────────────────────
+// Exact Phase 1 styles — now receives onClick prop
 
-function NewSessionBtn() {
+function NewSessionBtn({ onClick }) {
   const [hov, setHov] = useState(false)
   return (
     <button
+      onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -137,8 +187,9 @@ function NewSessionBtn() {
 }
 
 // ─── Individual Conversation Row ───────────────────────────────────────────────
+// Exact Phase 1 styles — delete now calls real onDelete() instead of alert()
 
-function ConvoItem({ convo, active, onClick }) {
+function ConvoItem({ convo, active, onClick, onDelete }) {
   const [hov, setHov] = useState(false)
 
   return (
@@ -155,7 +206,7 @@ function ConvoItem({ convo, active, onClick }) {
         background: active ? 'var(--cyan-faint)' : hov ? 'var(--bg-card)' : 'transparent',
       }}
     >
-      {/* Icon: filled triangle = active, diamond = inactive */}
+      {/* Icon: ▶ = active, ◈ = inactive */}
       <span style={{ fontSize: '12px', opacity: active ? 1 : 0.4, flexShrink: 0 }}>
         {active ? '▶' : '◈'}
       </span>
@@ -169,14 +220,17 @@ function ConvoItem({ convo, active, onClick }) {
         }}>
           {convo.title}
         </div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: '10px', color: 'var(--text-muted)', marginTop: '2px' }}>
+        <div style={{
+          fontFamily: 'var(--mono)', fontSize: '10px',
+          color: 'var(--text-muted)', marginTop: '2px',
+        }}>
           {convo.time}
         </div>
       </div>
 
-      {/* Delete button — only visible on hover */}
+      {/* Delete — only visible on hover */}
       <button
-        onClick={e => { e.stopPropagation(); alert(`Delete "${convo.title}"?`) }}
+        onClick={e => { e.stopPropagation(); onDelete() }}
         style={{
           opacity: hov ? 0.6 : 0,
           background: 'none', border: 'none',
@@ -186,6 +240,7 @@ function ConvoItem({ convo, active, onClick }) {
         }}
         onMouseEnter={e => (e.currentTarget.style.opacity = '1')}
         onMouseLeave={e => (e.currentTarget.style.opacity = hov ? '0.6' : '0')}
+        title="Delete session"
       >
         ✕
       </button>

@@ -1,14 +1,35 @@
-import Sidebar from './components/Sidebar'
-import ChatPage from './pages/ChatPage'
+// frontend/src/App.jsx
+// ─── Phase 3 update ───────────────────────────────────────────────────────────
+// isLoggedIn now reads from localStorage so if you already have a token
+// (e.g. you logged in earlier and refreshed the page), you skip the login screen.
+// authApi.logout() removes the token and returns to login.
+
+import { useState }       from 'react'
+import { isLoggedIn, authApi } from './api/client.js'
+import Sidebar            from './components/Sidebar'
+import ChatPage           from './pages/ChatPage'
+import LoginPage          from './pages/LoginPage'
 
 export default function App() {
+  // Initialize from localStorage — if a token exists, skip login
+  const [loggedIn, setLoggedIn] = useState(() => isLoggedIn())
+
+  const handleLogin = () => setLoggedIn(true)
+
+  const handleLogout = () => {
+    authApi.logout()       // removes token from localStorage
+    setLoggedIn(false)
+  }
+
+  if (!loggedIn) {
+    return <LoginPage onLogin={handleLogin} />
+  }
+
   return (
-    // Outer shell: column layout so header sits on top of the body row
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
 
-      <Header />
+      <Header onLogout={handleLogout} />
 
-      {/* Body row: sidebar on the left, chat on the right */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
         <Sidebar />
         <ChatPage />
@@ -18,57 +39,42 @@ export default function App() {
   )
 }
 
-// ─── Header ────────────────────────────────────────────────────────────────────
+// ─── Header — kept exactly from Phase 1, logout button added ─────────────────
 
-function Header() {
+function Header({ onLogout }) {
   return (
     <header style={{
       height: '56px',
       background: 'var(--bg-panel)',
       borderBottom: '1px solid var(--border)',
-      display: 'flex',
-      alignItems: 'center',
-      padding: '0 20px',
-      gap: '16px',
-      flexShrink: 0,
-      position: 'relative',
-      zIndex: 10,
+      display: 'flex', alignItems: 'center',
+      padding: '0 20px', gap: '16px',
+      flexShrink: 0, position: 'relative', zIndex: 10,
     }}>
-
-      {/* Decorative cyan glow line along the bottom of the header */}
       <GlowLine />
 
-      {/* Left: logo + wordmark */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '260px', flexShrink: 0 }}>
         <LogoIcon />
         <div>
           <div style={{
-            fontFamily: 'var(--mono)',
-            fontSize: '18px',
-            letterSpacing: '0.3em',
-            color: 'var(--cyan)',
-            textShadow: '0 0 20px var(--cyan), 0 0 40px rgba(0,212,255,0.3)',
-          }}>
-            JARVIS
-          </div>
+            fontFamily: 'var(--mono)', fontSize: '18px', letterSpacing: '0.3em',
+            color: 'var(--cyan)', textShadow: '0 0 20px var(--cyan), 0 0 40px rgba(0,212,255,0.3)',
+          }}>JARVIS</div>
           <div style={{ fontSize: '9px', color: 'var(--text-muted)', letterSpacing: '0.1em', fontFamily: 'var(--mono)' }}>
             AI DEVELOPER OS v0.1.0
           </div>
         </div>
       </div>
 
-      {/* Center: status + model badge */}
       <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: '12px' }}>
         <StatusDot />
         <ModelBadge />
       </div>
 
-      {/* Right: icon buttons + user chip */}
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
         <IconBtn title="Settings">⚙</IconBtn>
-        <UserChip />
+        <UserChip onLogout={onLogout} />
       </div>
-
     </header>
   )
 }
@@ -101,7 +107,6 @@ function LogoIcon() {
 function StatusDot() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: 'var(--mono)', fontSize: '11px', color: 'var(--text-muted)' }}>
-      {/* Pulsing green dot — "ONLINE" indicator */}
       <span style={{
         display: 'inline-block', width: '6px', height: '6px', borderRadius: '50%',
         background: 'var(--green)', boxShadow: '0 0 8px var(--green)',
@@ -130,15 +135,13 @@ function ModelBadge() {
 
 function IconBtn({ children, title }) {
   return (
-    <button
-      title={title}
-      style={{
-        width: '32px', height: '32px', borderRadius: '6px',
-        background: 'transparent', border: '1px solid var(--border)',
-        color: 'var(--text-2)', cursor: 'pointer', fontSize: '14px',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        transition: 'all 0.2s',
-      }}
+    <button title={title} style={{
+      width: '32px', height: '32px', borderRadius: '6px',
+      background: 'transparent', border: '1px solid var(--border)',
+      color: 'var(--text-2)', cursor: 'pointer', fontSize: '14px',
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      transition: 'all 0.2s',
+    }}
       onMouseEnter={e => {
         e.currentTarget.style.borderColor = 'var(--cyan-dim)'
         e.currentTarget.style.color = 'var(--cyan)'
@@ -155,23 +158,28 @@ function IconBtn({ children, title }) {
   )
 }
 
-function UserChip() {
+function UserChip({ onLogout }) {
+  const [hov, setHov] = useState(false)
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: '8px',
-      background: 'var(--bg-card)', border: '1px solid var(--border)',
-      borderRadius: '20px', padding: '4px 12px 4px 4px', cursor: 'pointer',
-    }}>
+    <div
+      onClick={onLogout}
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
+      title="Sign out"
+      style={{
+        display: 'flex', alignItems: 'center', gap: '8px',
+        background: 'var(--bg-card)', border: `1px solid ${hov ? 'var(--red)' : 'var(--border)'}`,
+        borderRadius: '20px', padding: '4px 12px 4px 4px', cursor: 'pointer',
+        transition: 'border-color 0.2s',
+      }}>
       <div style={{
         width: '24px', height: '24px', borderRadius: '50%',
         background: 'linear-gradient(135deg, var(--blue), var(--cyan))',
         display: 'flex', alignItems: 'center', justifyContent: 'center',
         fontSize: '10px', fontWeight: 700, color: 'var(--bg-void)',
-      }}>
-        D
-      </div>
-      <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-2)', letterSpacing: '0.02em' }}>
-        dev@jarvis
+      }}>D</div>
+      <span style={{ fontSize: '12px', fontWeight: 600, color: hov ? 'var(--red)' : 'var(--text-2)', letterSpacing: '0.02em', transition: 'color 0.2s' }}>
+        {hov ? 'sign out' : 'dev@jarvis'}
       </span>
     </div>
   )
